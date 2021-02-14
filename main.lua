@@ -19,6 +19,18 @@ P_W = 8
 JuJuSpeed = 1.05
 
 function love.load()
+    --sound effects p1
+    p1hit = love.audio.newSource("audio/steve.mp3", "static")
+    p1win = love.audio.newSource("audio/win1.mp3", "static")
+    p1score = love.audio.newSource("audio/gg1.mp3", "static")
+    --sound effects p2
+    p2hit = love.audio.newSource("audio/hehe.mp3", "static")
+    p2win = love.audio.newSource("audio/win2.mp3", "static")
+    p2score = love.audio.newSource("audio/gg2.mp3", "static")
+
+    --sponsors
+    sponsor1 = love.graphics.newImage("img/jorobas.jpg")
+    sponsor2 = love.graphics.newImage("img/nutri.png")
 
     love.graphics.setDefaultFilter('nearest', 'nearest')
     math.randomseed(os.time())
@@ -69,6 +81,7 @@ function love.update(dt)
         end
 
         if ball:collides(player1) then
+            p1hit:play()
             ball.dx = -ball.dx * JuJuSpeed
             ball.x = player1.x + 5
             if ball.dy < 0 then
@@ -77,8 +90,9 @@ function love.update(dt)
                 ball.dy = math.random(10,150)*2 -- new direction
             end
         end
-
+        
         if ball:collides(player2) then
+            p2hit:play()
             ball.dx = -ball.dx * JuJuSpeed
             ball.x = player2.x - 4
             if ball.dy < 0 then
@@ -92,11 +106,13 @@ function love.update(dt)
     if ball.x < 0 then
         p2s = p2s + 1
         if p2s == 5 then
+            p2win:play()
             winningPlayer = 2
             p1s = ':('
             p2s = ':)'
             gameState = 'done'
         else
+            p2score:play()
             servingPlayer = 1
             gameState = 'serve'
         end
@@ -106,11 +122,13 @@ function love.update(dt)
     if ball.x > V_Width then
         p1s = p1s + 1
         if p1s == 5 then 
+            p1win:play()
             winningPlayer = 1
             p1s = ':)'
             p2s = ':('
             gameState = 'done'
         else
+            p1score:play()
             servingPlayer = 2
             gameState = 'serve'
         end
@@ -155,7 +173,7 @@ function love.keypressed(key)
             gameState = 'serve'
             ball:reset()
             p1s = 0
-            ps2 = 0
+            p2s = 0
             if winningPlayer == 1 then
                 servingPlayer = 2
             else
@@ -184,6 +202,7 @@ function love.draw()
     elseif gameState == 'done' then
         love.graphics.printf("Player " .. tostring(winningPlayer) .. " wins!", 0, 10, V_Width, 'center') 
         love.graphics.printf('Press Enter to restart', 0, 90, V_Width, 'center') 
+        love.graphics.printf('This game has been brought to you by Jorobas Beers and Nutrileche!', 100, 190, V_Width, 'center',0,.5,.5) 
     else
         love.graphics.printf('GG', 0, 20, V_Width, 'center') 
     end
@@ -192,9 +211,16 @@ function love.draw()
     love.graphics.print(tostring(p1s), 180, V_Height/6) --score p1
     love.graphics.print(tostring(p2s), 230, V_Height/6) --score p2
 
+    --sponsors
+    love.graphics.draw(sponsor1, 50,10, 0, .2, .2)
+    love.graphics.draw(sponsor2, 320,170, 0, .3, .3)
+
     --paddles
+    love.graphics.setColor(204,0,0)
     player1:render()
+    love.graphics.setColor(0,0,252)
     player2:render()
+    love.graphics.setColor(0,222,0)
     ball:render()
     
     push:apply('end')

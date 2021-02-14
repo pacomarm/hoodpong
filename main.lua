@@ -19,6 +19,7 @@ P_W = 8
 JuJuSpeed = 1.05
 
 function love.load()
+    love.window.setTitle("Pacomarm Productions")
     --sound effects p1
     p1hit = love.audio.newSource("audio/steve.mp3", "static")
     p1win = love.audio.newSource("audio/win1.mp3", "static")
